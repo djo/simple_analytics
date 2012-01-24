@@ -1,0 +1,6 @@
+*.gem
+.bundle
+vendor/bundle
+bin
+pkg/*
+
