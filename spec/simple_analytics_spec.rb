@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe SimpleAnalytics::Api do
-
   before do
     @auth_request = stub_request(:post, "https://www.google.com/accounts/ClientLogin").
       with(:body => { "accountType" => "GOOGLE", "source" => "djo-simple_analytics-001", "service" => "analytics", "Email"=>"user@gmail.com", "Passwd" => "password" }).
@@ -21,13 +20,49 @@ describe SimpleAnalytics::Api do
   end
 
   describe "#fetch" do
-    before do
-      @analytics = SimpleAnalytics::Api.authenticate('user@gmail.com', 'password')
-    end
+    before { stub_analytics_request }
+
+    let(:analytics) { SimpleAnalytics::Api.authenticate('user@gmail.com', 'password') }
+    let(:properties) { { 'ids' => 'ga:id',
+                         'metrics' => 'ga:visitors',
+                         'dimensions' => 'ga:country',
+                         'start-date' => '2012-01-01',
+                         'end-date' => '2012-01-10' } }
 
     it "raises an argument error without requried properties" do
-      expect { @analytics.fetch(:ids => 'ga:xxx') }.to raise_error(ArgumentError)
+      expect {
+        analytics.fetch('ids' => 'ga:xxx')
+      }.to raise_error(ArgumentError)
+    end
+
+    it "fetches rows" do
+      rows = analytics.fetch(properties)
+      rows.should eq([[ "United States", "73834"], ["Ukraine", "15726"]])
+      analytics.rows.should eq([[ "United States", "73834"], ["Ukraine", "15726"]])
+    end
+
+    it "sets column headers" do
+      rows = analytics.fetch(properties)
+      rows.should eq([[ "United States", "73834"], ["Ukraine", "15726"]])
+      analytics.rows.should eq([[ "United States", "73834"], ["Ukraine", "15726"]])
+    end
+
+    it "raises not successful response error" do
+      stub_analytics_request(:status => 403, :code_type => Net::HTTPForbidden)
+
+      expect {
+        analytics.fetch(properties)
+      }.to raise_error(SimpleAnalytics::NotSuccessfulResponseError)
+    end
+
+    def stub_analytics_request(response = {})
+      data = { :body      => { :rows => [[ "United States", "73834"], ["Ukraine", "15726"]] }.to_json,
+               :status    => 200,
+               :code_type => Net::HTTPOK }.merge(response)
+
+      stub_request(:get, "https://www.googleapis.com/analytics/v3/data/ga?dimensions=ga:country&end-date=2012-01-10&ids=ga:id&metrics=ga:visitors&start-date=2012-01-01").
+        with(:headers => { 'Authorization'=>'GoogleLogin auth=secret', 'Gdata-Version'=>'3' }).
+        to_return(data)
     end
   end
-
 end

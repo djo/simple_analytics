@@ -3,6 +3,7 @@ PATH
   specs:
     simple_analytics (0.0.1)
       google_client_login (~> 0.3.1)
+      json
 
 GEM
   remote: http://rubygems.org/
@@ -15,6 +16,7 @@ GEM
       rspec-instafail (~> 0.1.8)
       ruby-progressbar (~> 0.0.10)
     google_client_login (0.3.1)
+    json (1.6.5)
     rake (0.9.2.2)
     rspec (2.8.0)
       rspec-core (~> 2.8.0)

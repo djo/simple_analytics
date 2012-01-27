@@ -1,12 +1,15 @@
-require "simple_analytics/version"
-require "google_client_login"
+require 'simple_analytics/version'
+require 'json'
+require 'google_client_login'
 
 module SimpleAnalytics
+  REQUIRED_PROPERTIES = ['ids', 'start-date', 'end-date', 'metrics']
+
+  class NotSuccessfulResponseError < RuntimeError; end
 
   class Api
-    REQUIRED_PROPERTIES = ['ids', 'start-date', 'end-date', 'metrics']
-
-    attr_reader :auth_token
+    attr_accessor :auth_token
+    attr_reader :rows, :body
 
     def self.authenticate(username, password, options = {})
       new(username, password, options).tap do |analytics|
@@ -28,6 +31,16 @@ module SimpleAnalytics
 
     def fetch(properties)
       check_properties(properties)
+
+      uri = URI.parse("https://www.googleapis.com/analytics/v3/data/ga")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      response = http.get("#{uri.path}?#{query_string(properties)}", { 'Authorization' => "GoogleLogin auth=#{@auth_token}", 'GData-Version' => '3' })
+      raise NotSuccessfulResponseError.new, response.body if response.code_type != Net::HTTPOK
+      @body = JSON.parse(response.body)
+      @rows = @body['rows']
     end
 
     private
@@ -45,6 +58,12 @@ module SimpleAnalytics
       end
     end
 
-  end
+    def query_string(properties)
+      properties.map{ |k, v| "#{k}=#{escape v}" }.sort.join('&')
+    end
 
+    def escape(property)
+      URI.escape(property.to_s, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    end
+  end
 end

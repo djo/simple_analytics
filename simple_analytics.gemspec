@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = SimpleAnalytics::VERSION
 
+  gem.add_dependency "json"
   gem.add_dependency "google_client_login", "~> 0.3.1"
   gem.add_development_dependency "rspec", "~> 2.8"
   gem.add_development_dependency "fuubar", "~> 0.0.6"
