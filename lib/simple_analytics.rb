@@ -3,14 +3,20 @@ require 'json'
 require 'google_client_login'
 
 module SimpleAnalytics
+  # Required query parameters are used to configure which data to return from Google Analytics.
   REQUIRED_PROPERTIES = ['ids', 'start-date', 'end-date', 'metrics']
 
   class NotSuccessfulResponseError < RuntimeError; end
 
   class Api
+    # An authentication token for the Google Analytics Api.
     attr_accessor :auth_token
+
+    # +rows+ is a 2-dimensional array of strings, each string represents a value in the table.
+    # +body+ is the data in response body.
     attr_reader :rows, :body
 
+    # Authentication using ClientLogin, returns an analytics service object.
     def self.authenticate(username, password, options = {})
       new(username, password, options).tap do |analytics|
         analytics.authenticate
@@ -23,12 +29,14 @@ module SimpleAnalytics
       @options = options
     end
 
+    # Authenticates using ClientLogin.
     def authenticate
       login_service = ::GoogleClientLogin::GoogleAuth.new(client_options)
       login_service.authenticate(@username, @password, @options[:captcha_response])
       @auth_token = login_service.auth
     end
 
+    # Fetches the report data, the following query parameters are required: 'ids', 'start-date', 'end-date', 'metrics'.
     def fetch(properties)
       check_properties(properties)
 

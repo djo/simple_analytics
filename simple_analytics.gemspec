@@ -4,9 +4,9 @@ require File.expand_path('../lib/simple_analytics/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Andrew Djoga"]
   gem.email         = ["andrew.djoga@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{The Simple Analytics allows to access Google Analytics report data}
+  gem.summary       = %q{Google Analytics Export API Ruby Wrapper}
+  gem.homepage      = "https://github.com/Djo/simple_analytics"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
