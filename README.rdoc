@@ -1,4 +1,5 @@
 = SimpleAnalytics
+{<img src="https://secure.travis-ci.org/Djo/simple_analytics.png" />}[http://travis-ci.org/Djo/simple_analytics]
 
 SimpleAnalytics gem provides accessing Google Analytics Export Api. It uses Version 3.0 of the Google Core Reporting API with JSON. You can find the google documentation {here}[http://code.google.com/apis/analytics/docs/gdata/v3/gdataGettingStarted.html].
 
