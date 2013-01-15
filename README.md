@@ -3,15 +3,13 @@
 
 *SimpleAnalytics* gem provides accessing Google Analytics Export Api. It uses Version 3.0 of the Google Core Reporting API with JSON. You can find the google documentation [here](http://code.google.com/apis/analytics/docs/gdata/v3/gdataGettingStarted.html).
 
-## Installation
-
-Install as a gem from rubygems:
-
-```console
-gem install simple_analytics
-```
-
 ## Getting Started
+
+You can add it to your Gemfile with:
+
+```ruby
+gem 'simple_analytics'
+```
 
 Authentication using the *ClientLogin*:
 
@@ -22,13 +20,14 @@ analytics = SimpleAnalytics::Api.authenticate('user@gmail.com', 'password')
 The `authenticate` method sets an `auth_token` in the analytics service object. Then you can fetch the report data:
 
 ```ruby
-analytics.fetch('ids'        => 'ga:id',
-                'metrics'    => 'ga:visitors',
-                'dimensions' => 'ga:country',
-                'start-date' => '2012-01-01',
-                'end-date'   => '2012-01-10')
-
- # => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
+analytics.fetch(
+  'ids'        => 'ga:id',
+  'metrics'    => 'ga:visitors',
+  'dimensions' => 'ga:country',
+  'start-date' => '2012-01-01',
+  'end-date'   => '2012-01-10'
+)
+# => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
 ```
 
 The `fetch` method sets and returns rows. Required query parameters are used to configure which data to return from the Google Analytics:
@@ -64,29 +63,33 @@ All parameters are escaped before a request. For date format you can use the nex
 ```ruby
 analytics = SimpleAnalytics::Api.authenticate('user@gmail.com', 'password')
 
-analytics.fetch('ids'        => 'ga:id',
-                'metrics'    => 'ga:visitors',
-                'dimensions' => 'ga:country',
-                'start-date' => '2012-01-01',
-                'end-date'   => '2012-01-10')
- # => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
+analytics.fetch(
+  'ids'        => 'ga:id',
+  'metrics'    => 'ga:visitors',
+  'dimensions' => 'ga:country',
+  'start-date' => '2012-01-01',
+  'end-date'   => '2012-01-10'
+)
+# => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
 
 analytics.rows
- # => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
+# => [["United States","24451"], ["Brazil","15616"], ["Spain","3966"]]
 
 analytics.body
- # => returns the parsed response body (hash), where you can get other info, see google docs
+# => returns the parsed response body (hash), where you can get other info, see google docs.
 
-analytics.fetch('ids'        => 'ga:another-id',
-                'metrics'    => 'ga:visitors,ga:newVisits',
-                'dimensions' => 'ga:pagePath',
-                'filters'    => 'ga:pagepath=~/articles/[\w-]+\z'
-                'start-date' => '2012-01-01',
-                'end-date'   => '2012-01-10')
- # => [["/articles/first-post","12", "2"], ["/articles/second-post","2", "1"]]
+analytics.fetch(
+  'ids'        => 'ga:another-id',
+  'metrics'    => 'ga:visitors,ga:newVisits',
+  'dimensions' => 'ga:pagePath',
+  'filters'    => 'ga:pagepath=~/articles/[\w-]+\z'
+  'start-date' => '2012-01-01',
+  'end-date'   => '2012-01-10'
+)
+# => [["/articles/first-post","12", "2"], ["/articles/second-post","2", "1"]]
 
 analytics.rows
- # => [["/articles/first-post","12", "2"], ["/articles/second-post","2", "1"]]
+# => [["/articles/first-post","12", "2"], ["/articles/second-post","2", "1"]]
 ```
 
 
